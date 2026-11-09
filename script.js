@@ -1,0 +1,210 @@
+const cvButton = document.querySelector("#download-cv");
+const contactForm = document.querySelector("#contact-form");
+const formStatus = document.querySelector("#form-status");
+const yearLabel = document.querySelector("#current-year");
+const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+const typewriter = document.querySelector(".typewriter");
+const mobileMenuToggle = document.querySelector(".menu-toggle");
+const mobileNavigation = document.querySelector("#mobile-navigation");
+const mobileMenuClose = document.querySelector(".nav-close");
+const mobileMenuQuery = window.matchMedia("(max-width: 768px)");
+
+const setMobileMenuOpen = (open, restoreFocus = false) => {
+  if (!mobileMenuToggle || !mobileNavigation) {
+    return;
+  }
+
+  const isOpen = mobileMenuQuery.matches && open;
+  mobileNavigation.classList.toggle("is-open", isOpen);
+  mobileMenuToggle.setAttribute("aria-expanded", String(isOpen));
+  mobileMenuToggle.setAttribute("aria-label", isOpen ? "Close navigation menu" : "Open navigation menu");
+  mobileNavigation.setAttribute("aria-hidden", String(mobileMenuQuery.matches && !isOpen));
+  mobileNavigation.inert = mobileMenuQuery.matches && !isOpen;
+  document.body.classList.toggle("mobile-nav-open", isOpen);
+
+  if (isOpen) {
+    mobileMenuClose?.focus();
+  } else if (restoreFocus) {
+    mobileMenuToggle.focus();
+  }
+};
+
+if (mobileMenuToggle && mobileNavigation) {
+  setMobileMenuOpen(false);
+  mobileMenuToggle.addEventListener("click", () => {
+    setMobileMenuOpen(mobileMenuToggle.getAttribute("aria-expanded") !== "true");
+  });
+  mobileMenuClose?.addEventListener("click", () => setMobileMenuOpen(false, true));
+  window.addEventListener("resize", () => {
+    if (!mobileMenuQuery.matches) {
+      setMobileMenuOpen(false);
+    }
+  });
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && mobileMenuToggle.getAttribute("aria-expanded") === "true") {
+      setMobileMenuOpen(false, true);
+    }
+  });
+}
+
+if (yearLabel) {
+  yearLabel.textContent = new Date().getFullYear();
+}
+
+const initializeTypewriter = () => {
+  if (!typewriter) {
+    return;
+  }
+
+  const roles = ["Product & Delivery Manager", "Game Producer", "Product Strategist"];
+
+  if (reduceMotion) {
+    typewriter.textContent = roles[0];
+  } else {
+    let roleIndex = 0;
+    let characterIndex = 0;
+    let deleting = false;
+
+    const typeNextCharacter = () => {
+      const currentRole = roles[roleIndex];
+      characterIndex += deleting ? -1 : 1;
+      typewriter.textContent = currentRole.slice(0, characterIndex);
+
+      if (!deleting && characterIndex === currentRole.length) {
+        deleting = true;
+        window.setTimeout(typeNextCharacter, 1400);
+        return;
+      }
+
+      if (deleting && characterIndex === 0) {
+        deleting = false;
+        roleIndex = (roleIndex + 1) % roles.length;
+        window.setTimeout(typeNextCharacter, 350);
+        return;
+      }
+
+      window.setTimeout(typeNextCharacter, deleting ? 55 : 105);
+    };
+
+    typeNextCharacter();
+  }
+};
+
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", initializeTypewriter, { once: true });
+} else {
+  initializeTypewriter();
+}
+
+document.querySelectorAll(".project-card").forEach((card) => {
+  const visual = card.querySelector(".project-media");
+  const video = card.querySelector(".project-media .project-video");
+
+  if (!visual || !video) {
+    console.warn("Skipping project card without project media or video:", card);
+    return;
+  }
+
+  video.muted = true;
+  let isActive = false;
+  let playAttempt = 0;
+
+  const playTrailer = () => {
+    isActive = true;
+    const currentAttempt = ++playAttempt;
+    video.play().then(() => {
+      if (currentAttempt !== playAttempt) {
+        return;
+      }
+
+      if (isActive) {
+        visual.classList.add("is-playing");
+      } else {
+        video.pause();
+      }
+    }).catch((error) => {
+      if (currentAttempt === playAttempt) {
+        visual.classList.remove("is-playing");
+      }
+
+      if (currentAttempt === playAttempt && error.name !== "AbortError" && isActive) {
+        console.warn(`Unable to play ${card.dataset.project} trailer:`, error);
+      }
+    });
+  };
+
+  const stopTrailer = () => {
+    playAttempt += 1;
+    isActive = false;
+    video.pause();
+    video.currentTime = 0;
+    visual.classList.remove("is-playing");
+  };
+
+  card.addEventListener("pointerenter", playTrailer);
+  card.addEventListener("pointerleave", stopTrailer);
+});
+
+document.querySelectorAll('a[href^="#"]').forEach((link) => {
+  link.addEventListener("click", (event) => {
+    const target = document.querySelector(link.getAttribute("href"));
+
+    if (!target) {
+      return;
+    }
+
+    event.preventDefault();
+    if (link.closest("#mobile-navigation") && mobileMenuQuery.matches) {
+      setMobileMenuOpen(false);
+    }
+    history.pushState(null, "", link.getAttribute("href"));
+    target.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "start" });
+  });
+});
+
+cvButton.addEventListener("click", () => {
+  if (mobileMenuQuery.matches) {
+    setMobileMenuOpen(false, true);
+  }
+
+  const cvContent = [
+    "HASAN NASSER FNEISH",
+    "Product & Delivery Manager",
+    "",
+    "PROFILE",
+    "Product & Delivery Manager with 10+ years of experience across PC MMORPGs, Web3 gaming, mobile 4X strategy, hybrid-casual portfolios, and live-streaming platforms.",
+    "",
+    "EXPERTISE",
+    "Product and delivery management; Agile/Scrum implementation; roadmap prioritization; LiveOps; data-led monetization; cross-functional delivery; release and deployment.",
+    "",
+    "SELECTED IMPACT",
+    "Shipped 4 hybrid-casual titles in 10 months.",
+    "Improved Day 1 retention from 10% to 28%.",
+    "Scaled a live-streaming platform to 5M+ monthly audience-hours.",
+    "",
+    "SELECTED EXPERIENCE",
+    "Hybrid-Casual Portfolio — Symmetric Studio",
+    "PC MMORPG — Nifty Craft",
+    "Mobile 4X Strategy & Platform — Falafel Games",
+    "Taqki Livestreaming App — Falafel Games",
+  ].join("\n");
+  const cvFile = new Blob([cvContent], { type: "text/plain;charset=utf-8" });
+  const downloadUrl = URL.createObjectURL(cvFile);
+  const downloadLink = document.createElement("a");
+
+  downloadLink.href = downloadUrl;
+  downloadLink.download = "Hasan-Nasser-Fneish-Resume.txt";
+  document.body.append(downloadLink);
+  downloadLink.click();
+  downloadLink.remove();
+  window.setTimeout(() => URL.revokeObjectURL(downloadUrl), 1000);
+});
+
+contactForm.addEventListener("submit", (event) => {
+  event.preventDefault();
+  const formData = new FormData(contactForm);
+  const name = formData.get("name");
+
+  formStatus.textContent = `Thanks, ${name}. This form is a demo and hasn't sent your message.`;
+  contactForm.reset();
+});
