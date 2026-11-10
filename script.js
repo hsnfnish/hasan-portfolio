@@ -1,4 +1,7 @@
 const cvButton = document.querySelector("#download-cv");
+const contactForm = document.querySelector("#contact-form");
+const formResult = document.querySelector("#form-result");
+const submitButton = contactForm.querySelector(".submit-button");
 const yearLabel = document.querySelector("#current-year");
 const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 const typewriter = document.querySelector(".typewriter");
@@ -196,4 +199,36 @@ cvButton.addEventListener("click", () => {
   downloadLink.click();
   downloadLink.remove();
   window.setTimeout(() => URL.revokeObjectURL(downloadUrl), 1000);
+});
+
+contactForm.addEventListener("submit", async (event) => {
+  event.preventDefault();
+  submitButton.disabled = true;
+  submitButton.textContent = "Sending...";
+  formResult.hidden = false;
+  formResult.textContent = "Sending...";
+
+  try {
+    const response = await fetch("https://api.web3forms.com/submit", {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+      },
+      body: new FormData(contactForm),
+    });
+    const result = await response.json();
+
+    if (!response.ok || !result.success) {
+      throw new Error(result.message || "Web3Forms rejected the submission.");
+    }
+
+    contactForm.reset();
+    formResult.textContent = "Thank you! Your message has been sent successfully.";
+  } catch (error) {
+    console.error("Contact form submission failed:", error);
+    formResult.textContent = "Something went wrong. Please try again later.";
+  } finally {
+    submitButton.disabled = false;
+    submitButton.textContent = "Send message";
+  }
 });
