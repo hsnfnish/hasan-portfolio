@@ -1,4 +1,4 @@
-const cvButton = document.querySelector("#download-cv");
+const cvLink = document.querySelector("#download-cv");
 const contactForm = document.querySelector("#contact-form");
 const formResult = document.querySelector("#form-result");
 const submitButton = contactForm.querySelector(".submit-button");
@@ -163,42 +163,10 @@ document.querySelectorAll('a[href^="#"]').forEach((link) => {
   });
 });
 
-cvButton.addEventListener("click", () => {
+cvLink.addEventListener("click", () => {
   if (mobileMenuQuery.matches) {
     setMobileMenuOpen(false, true);
   }
-
-  const cvContent = [
-    "HASAN NASSER FNEISH",
-    "Product & Delivery Manager",
-    "",
-    "PROFILE",
-    "Product & Delivery Manager with 10+ years of experience across PC MMORPGs, Web3 gaming, mobile 4X strategy, hybrid-casual portfolios, and live-streaming platforms.",
-    "",
-    "EXPERTISE",
-    "Product and delivery management; Agile/Scrum implementation; roadmap prioritization; LiveOps; data-led monetization; cross-functional delivery; release and deployment.",
-    "",
-    "SELECTED IMPACT",
-    "Shipped 4 hybrid-casual titles in 10 months.",
-    "Improved Day 1 retention from 10% to 28%.",
-    "Scaled a live-streaming platform to 5M+ monthly audience-hours.",
-    "",
-    "SELECTED EXPERIENCE",
-    "Hybrid-Casual Portfolio — Symmetric Studio",
-    "PC MMORPG — Nifty Craft",
-    "Mobile 4X Strategy & Platform — Falafel Games",
-    "Taqki Livestreaming App — Falafel Games",
-  ].join("\n");
-  const cvFile = new Blob([cvContent], { type: "text/plain;charset=utf-8" });
-  const downloadUrl = URL.createObjectURL(cvFile);
-  const downloadLink = document.createElement("a");
-
-  downloadLink.href = downloadUrl;
-  downloadLink.download = "Hasan-Nasser-Fneish-Resume.txt";
-  document.body.append(downloadLink);
-  downloadLink.click();
-  downloadLink.remove();
-  window.setTimeout(() => URL.revokeObjectURL(downloadUrl), 1000);
 });
 
 contactForm.addEventListener("submit", async (event) => {
