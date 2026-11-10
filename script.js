@@ -1,6 +1,4 @@
 const cvButton = document.querySelector("#download-cv");
-const contactForm = document.querySelector("#contact-form");
-const formStatus = document.querySelector("#form-status");
 const yearLabel = document.querySelector("#current-year");
 const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 const typewriter = document.querySelector(".typewriter");
@@ -198,13 +196,4 @@ cvButton.addEventListener("click", () => {
   downloadLink.click();
   downloadLink.remove();
   window.setTimeout(() => URL.revokeObjectURL(downloadUrl), 1000);
-});
-
-contactForm.addEventListener("submit", (event) => {
-  event.preventDefault();
-  const formData = new FormData(contactForm);
-  const name = formData.get("name");
-
-  formStatus.textContent = `Thanks, ${name}. This form is a demo and hasn't sent your message.`;
-  contactForm.reset();
 });
