@@ -57,7 +57,7 @@ const initializeTypewriter = () => {
     return;
   }
 
-  const roles = ["Product & Delivery Manager", "Game Producer", "Product Strategist"];
+  const roles = ["Product Manager", "Product Strategy", "Technical Delivery"];
 
   if (reduceMotion) {
     typewriter.textContent = roles[0];
@@ -163,13 +163,13 @@ document.querySelectorAll('a[href^="#"]').forEach((link) => {
   });
 });
 
-cvLink.addEventListener("click", () => {
+cvLink?.addEventListener("click", () => {
   if (mobileMenuQuery.matches) {
     setMobileMenuOpen(false, true);
   }
 });
 
-contactForm.addEventListener("submit", async (event) => {
+contactForm?.addEventListener("submit", async (event) => {
   event.preventDefault();
   submitButton.disabled = true;
   submitButton.textContent = "Sending...";
